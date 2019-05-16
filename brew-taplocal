@@ -47,7 +47,7 @@ function getGithubUserNameFromUrl()
 path="$1"
 
 ( cd "$path"
-  github_username="$(git config -l | grep 'github.user')"
+  github_username="$(git config -l | grep 'github.user' | sed 's/github.user=//')"
   [ -z "$github_username" ] && {
     originURL="$(git config --local -l | grep 'remote.origin.url')"
     github_username="$(getGithubUserNameFromUrl $originURL)"

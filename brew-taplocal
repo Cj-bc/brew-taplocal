@@ -42,7 +42,7 @@ function getGithubUserNameFromUrl()
 # }}}
 
 # validatePath: validate whether that is homebrew formula repo or not {{{
-function validatePath() { [[ "$1" =~ .*/homebrew-.* ]]; }
+function validatePath() { [[ "$1" =~ .*/homebrew-.* ]] && return || return -1;}
 # }}}
 
 [[ $1 =~ --.* ]] && echo "No options are provided except --help." && exit $EX_USAGE

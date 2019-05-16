@@ -42,7 +42,7 @@ function getGithubUserNameFromUrl()
 # }}}
 
 
-[[ $1 =~ --.* ]] && echo "No options are provided except --help." && return $EX_USAGE
+[[ $1 =~ --.* ]] && echo "No options are provided except --help." && exit $EX_USAGE
 
 path="$1"
 
@@ -52,13 +52,13 @@ path="$1"
     originURL="$(git config --local -l | grep 'remote.origin.url')"
     github_username="$(getGithubUserNameFromUrl $originURL)"
   }
-  [ -z "$github_username" ] && echo "Unable to detect author name" && return $EX_CONFIG
+  [ -z "$github_username" ] && echo "Unable to detect author name" && exit $EX_CONFIG
 
   [[ ! -d "${HOMEBREW_TAP_ROOT}/${github_username}" ]] && mkdir "${HOMEBREW_PREFIX}/${github_username}"
 
   ln -s "${PWD}" "${HOMEBREW_TAP_ROOT}/${github_username}/${PWD##*/}"
 
   [ -d "${HOMEBREW_TAP_ROOT}/${github_username}/${PWD##*/}" ] \
-    && return 0 \
-    || return 135
+    && exit 0 \
+    || exit 135
 )

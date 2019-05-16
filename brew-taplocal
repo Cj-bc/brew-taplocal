@@ -20,6 +20,7 @@
 
 EX_USAGE=64
 EX_CONFIG=78
+HOMEBREW_PREFIX="${HOMEBREW_PREFIX:=$(brew --prefix)}"
 HOMEBREW_TAP_ROOT="${HOMEBREW_PREFIX}/Homebrew/Library/Taps"
 
 # getGithubUserNameFromUrl: get github username from URL {{{

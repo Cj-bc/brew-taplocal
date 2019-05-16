@@ -7,7 +7,7 @@
 # @(#) version -
 
 setup() {
- source brew-taplocal
+  source ./brew-taplocal
 }
 
 @test "getGithubUserNameFromUrl: https protocol" {

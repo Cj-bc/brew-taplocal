@@ -18,12 +18,6 @@
 #:
 #: author_name is decided from remote's username
 
-EX_USAGE=64
-EX_CONFIG=78
-EX_DATAERR=65
-HOMEBREW_PREFIX="${HOMEBREW_PREFIX:=$(brew --prefix)}"
-HOMEBREW_TAP_ROOT="${HOMEBREW_PREFIX}/Homebrew/Library/Taps"
-
 # getGithubUserNameFromUrl: get github username from URL {{{
 function getGithubUserNameFromUrl()
 {
@@ -45,6 +39,11 @@ function validatePath() { [[ "$1" =~ .*/homebrew-.* ]] && return || return -1;}
 # }}}
 # main: the main process of brew-taplocal {{{
 function main() {
+  EX_USAGE=64
+  EX_CONFIG=78
+  EX_DATAERR=65
+  HOMEBREW_PREFIX="${HOMEBREW_PREFIX:=$(brew --prefix)}"
+  HOMEBREW_TAP_ROOT="${HOMEBREW_PREFIX}/Homebrew/Library/Taps"
 
   [[ $1 =~ --.* ]] && echo "No options are provided except --help." && exit $EX_USAGE
 

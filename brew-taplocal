@@ -48,7 +48,7 @@ function validatePath() { [[ "$1" =~ .*/homebrew-.* ]] && return || return -1;}
 [[ $1 =~ --.* ]] && echo "No options are provided except --help." && exit $EX_USAGE
 
 path="$1"
-validatePath "$path" || echo "This is not formula repository" && exit $EX_DATAERR
+validatePath "$path" || { echo "This is not formula repository" && exit $EX_DATAERR; }
 
 cd "$path"
 github_username="$(git config -l | grep 'github.user' | sed 's/github.user=//')"

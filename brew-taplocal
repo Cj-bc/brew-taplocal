@@ -67,4 +67,6 @@ function main() {
     || echo "failed to tap" && exit 135
 }
 
-[[ $0 =~ .*brew-taplocal ]] && main
+[[ $0 =~ .*brew-taplocal ]] \
+  && main \
+  || return 0

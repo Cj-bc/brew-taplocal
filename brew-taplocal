@@ -22,8 +22,8 @@
 function getGithubUserNameFromUrl()
 {
   url="$1"
-  if [[ "$url" =~ github:.* ]]; then
-    repo_name="${url##github:}"
+  if [[ "$url" =~ github.com:.* ]]; then
+    repo_name="${url##github.com:}"
     name="${repo_name%%/*}"
   elif [[ "$url" =~ https://github.com/.* ]]; then
     repo_name="${url##https://github.com/}"

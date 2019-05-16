@@ -29,7 +29,9 @@ function getGithubUserNameFromUrl()
     name="${url##https://github.com/}"
     name="${name%%/*}"
   fi
-  echo "$name"
+  [ -n "$name" ] \
+    && echo "$name" \
+    || return 135
 }
 
 

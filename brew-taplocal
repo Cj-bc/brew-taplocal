@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+#
+# brew taplocal -- Taps locally exist formula repository.
+#
+# Copyright 2018 (c) Cj-bc
+# This software is released under MIT License
+#
+# @(#) version -
+
+#: usage: brew taplocal <PATH>
+#:
+#: Tap <PATH> as a homebrew's formula repository
+#:
+#: This works by making symlink from <PATH> to where homebrew stores taps:
+#: Almost like:
+#:
+#: ln -s <PATH> $(brew --prefix)/Homebrew/Library/Taps/<author_name>/<repo_name>
+#:
+#: author_name is decided from remote's username
+
+EX_USAGE=64
+EX_CONFIG=78
+EX_DATAERR=65
+HOMEBREW_PREFIX="${HOMEBREW_PREFIX:=$(brew --prefix)}"
+HOMEBREW_TAP_ROOT="${HOMEBREW_PREFIX}/Homebrew/Library/Taps"
+
+# getGithubUserNameFromUrl: get github username from URL {{{
+function getGithubUserNameFromUrl()
+{
+  url="$1"
+  if [[ "$url" =~ 'github:.*' ]]; then
+    name="${url##github:}"
+    name="${name%%/*}"
+  elif [[ "$url" =~ 'https://github.com/.*' ]]; then
+    name="${url##https://github.com/}"
+    name="${name%%/*}"
+  fi
+  echo "$name"
+}
+
+
+# }}}
+
+# validatePath: validate whether that is homebrew formula repo or not {{{
+function validatePath() { [[ "$1" =~ .*/homebrew-.* ]]; }
+# }}}
+
+[[ $1 =~ --.* ]] && echo "No options are provided except --help." && exit $EX_USAGE
+
+path="$1"
+validatePath "$path" || echo "This is not formula repository" && exit $EX_DATAERR
+
+( cd "$path"
+  github_username="$(git config -l | grep 'github.user' | sed 's/github.user=//')"
+  [ -z "$github_username" ] && {
+    originURL="$(git config --local -l | grep 'remote.origin.url')"
+    github_username="$(getGithubUserNameFromUrl $originURL)"
+  }
+  [ -z "$github_username" ] && echo "Unable to detect author name" && exit $EX_CONFIG
+
+  [[ ! -d "${HOMEBREW_TAP_ROOT}/${github_username}" ]] && mkdir "${HOMEBREW_PREFIX}/${github_username}"
+
+  ln -s "${PWD}" "${HOMEBREW_TAP_ROOT}/${github_username}/${PWD##*/}"
+
+  [ -d "${HOMEBREW_TAP_ROOT}/${github_username}/${PWD##*/}" ] \
+    && exit 0 \
+    || exit 135
+)

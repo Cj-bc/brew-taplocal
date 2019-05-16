@@ -27,14 +27,13 @@ HOMEBREW_TAP_ROOT="${HOMEBREW_PREFIX}/Homebrew/Library/Taps"
 function getGithubUserNameFromUrl()
 {
   url="$1"
-  name="$(echo "$url" | awk '/https:\/\/github/{split($0,parsed,"/");
-                                               print parsed[4];
-                                              }
-                            /github:/{substr("github:","");
-                                      substr("/.*","");
-                                      print $0;
-                                     } \
-                           ')"
+  if [[ "$url" =~ 'github:.*' ]]; then
+    name="${url##github:}"
+    name="${name%%/*}"
+  elif [[ "$url" =~ 'https://github.com/.*' ]]; then
+    name="${url##https://github.com/}"
+    name="${name%%/*}"
+  fi
   echo "$name"
 }
 

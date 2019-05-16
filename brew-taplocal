@@ -50,19 +50,19 @@ function validatePath() { [[ "$1" =~ .*/homebrew-.* ]] && return || return -1;}
 path="$1"
 validatePath "$path" || echo "This is not formula repository" && exit $EX_DATAERR
 
-( cd "$path"
-  github_username="$(git config -l | grep 'github.user' | sed 's/github.user=//')"
-  [ -z "$github_username" ] && {
-    originURL="$(git config --local -l | grep 'remote.origin.url')"
-    github_username="$(getGithubUserNameFromUrl $originURL)"
-  }
-  [ -z "$github_username" ] && echo "Unable to detect author name" && exit $EX_CONFIG
+cd "$path"
+github_username="$(git config -l | grep 'github.user' | sed 's/github.user=//')"
+[ -z "$github_username" ] && {
+  originURL="$(git config --local -l | grep 'remote.origin.url')"
+  github_username="$(getGithubUserNameFromUrl $originURL)"
+}
+[ -z "$github_username" ] && echo "Unable to detect author name" && exit $EX_CONFIG
 
-  [[ ! -d "${HOMEBREW_TAP_ROOT}/${github_username}" ]] && mkdir "${HOMEBREW_PREFIX}/${github_username}"
+[[ ! -d "${HOMEBREW_TAP_ROOT}/${github_username}" ]] && mkdir "${HOMEBREW_PREFIX}/${github_username}"
 
-  ln -s "${PWD}" "${HOMEBREW_TAP_ROOT}/${github_username}/${PWD##*/}"
+ln -s "${PWD}" "${HOMEBREW_TAP_ROOT}/${github_username}/${PWD##*/}"
 
-  [ -d "${HOMEBREW_TAP_ROOT}/${github_username}/${PWD##*/}" ] \
-    && exit 0 \
-    || exit 135
-)
+[ -d "${HOMEBREW_TAP_ROOT}/${github_username}/${PWD##*/}" ] \
+  && exit 0 \
+  || echo "failed to tap" && exit 135
+

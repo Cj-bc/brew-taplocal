@@ -22,4 +22,12 @@ setup() {
   [ "$res" = "Cj-bc" ]
 }
 
+@test "validatePath: formual repository" {
+  run validatePath "foo/homebrew-brew-taplocal"
+  [ $status -eq 0 ]
+}
 
+@test "validatePath: non formula repository" {
+  run validatePath "foo/brew-taplocal"
+  [ $status -ne 0 ]
+}

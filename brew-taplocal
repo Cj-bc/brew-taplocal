@@ -37,7 +37,7 @@ function getGithubUserNameFromUrl()
 
 # }}}
 # validatePath: validate whether that is homebrew formula repo or not {{{
-function validatePath() { [[ "$1" =~ .*/homebrew-.* ]] && return || return -1;}
+function validatePath() { [[ "$1" =~ homebrew-.* ]] && return || return -1;}
 # }}}
 # main: the main process of brew-taplocal {{{
 function main() {

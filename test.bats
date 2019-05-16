@@ -11,13 +11,13 @@ setup() {
 }
 
 @test "getGithubUserNameFromUrl: https protocol" {
-  res="$(getGithubUserNameFromUrl https://github.com/Cj-bc/brew-taplocal)"
+  res="$(getGithubUserNameFromUrl 'https://github.com/Cj-bc/brew-taplocal')"
 
   [ "$res" = "Cj-bc" ]
 }
 
 @test "getGithubUserNameFromUrl: ssh protocol" {
-  res="$(getGithubUserNameFromUrl github.com:Cj-bc/brew-taplocal)"
+  res="$(getGithubUserNameFromUrl 'github.com:Cj-bc/brew-taplocal')"
 
   [ "$res" = "Cj-bc" ]
 }

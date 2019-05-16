@@ -5,7 +5,7 @@
 # Copyright 2018 (c) Cj-bc
 # This software is released under MIT License
 #
-# @(#) version v0.1.0
+# @(#) version v0.2.0
 
 #: usage: brew taplocal <PATH>
 #:
@@ -18,39 +18,41 @@
 #:
 #: author_name is decided from remote's username
 
-EX_USAGE=64
-EX_CONFIG=78
-EX_DATAERR=65
-HOMEBREW_PREFIX="${HOMEBREW_PREFIX:=$(brew --prefix)}"
-HOMEBREW_TAP_ROOT="${HOMEBREW_PREFIX}/Homebrew/Library/Taps"
-
 # getGithubUserNameFromUrl: get github username from URL {{{
 function getGithubUserNameFromUrl()
 {
   url="$1"
-  if [[ "$url" =~ 'github:.*' ]]; then
-    name="${url##github:}"
-    name="${name%%/*}"
-  elif [[ "$url" =~ 'https://github.com/.*' ]]; then
-    name="${url##https://github.com/}"
-    name="${name%%/*}"
+  if [[ "$url" =~ github.com:.* ]]; then
+    repo_name="${url##github.com:}"
+    name="${repo_name%%/*}"
+  elif [[ "$url" =~ https://github.com/.* ]]; then
+    repo_name="${url##https://github.com/}"
+    name="${repo_name%%/*}"
   fi
-  echo "$name"
+  [ -n "$name" ] \
+    && echo "$name" \
+    || return 135
 }
 
 
 # }}}
-
 # validatePath: validate whether that is homebrew formula repo or not {{{
-function validatePath() { [[ "$1" =~ .*/homebrew-.* ]]; }
+function validatePath() { [[ "$1" =~ homebrew-.* ]] && return || return -1;}
 # }}}
+# main: the main process of brew-taplocal {{{
+function main() {
+  EX_USAGE=64
+  EX_CONFIG=78
+  EX_DATAERR=65
+  HOMEBREW_PREFIX="${HOMEBREW_PREFIX:=$(brew --prefix)}"
+  HOMEBREW_TAP_ROOT="${HOMEBREW_PREFIX}/Homebrew/Library/Taps"
 
-[[ $1 =~ --.* ]] && echo "No options are provided except --help." && exit $EX_USAGE
+  [[ $1 =~ --.* ]] && echo "No options are provided except --help." && exit $EX_USAGE
 
-path="$1"
-validatePath "$path" || echo "This is not formula repository" && exit $EX_DATAERR
+  path="$1"
+  validatePath "$path" || { echo "This is not formula repository" && exit $EX_DATAERR; }
 
-( cd "$path"
+  cd "$path"
   github_username="$(git config -l | grep 'github.user' | sed 's/github.user=//')"
   [ -z "$github_username" ] && {
     originURL="$(git config --local -l | grep 'remote.origin.url')"
@@ -64,5 +66,10 @@ validatePath "$path" || echo "This is not formula repository" && exit $EX_DATAER
 
   [ -d "${HOMEBREW_TAP_ROOT}/${github_username}/${PWD##*/}" ] \
     && exit 0 \
-    || exit 135
-)
+    || echo "failed to tap" && exit 135
+}
+# }}}
+
+[[ $0 =~ .*brew-taplocal ]] \
+  && main \
+  || return 0

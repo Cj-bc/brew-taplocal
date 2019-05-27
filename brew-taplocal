@@ -71,5 +71,5 @@ function main() {
 # }}}
 
 [[ $0 =~ .*brew-taplocal ]] \
-  && main \
+  && main "$*"\
   || return 0

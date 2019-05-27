@@ -5,7 +5,7 @@
 # Copyright 2018 (c) Cj-bc
 # This software is released under MIT License
 #
-# @(#) version v0.2.0
+# @(#) version v0.2.1
 
 #: usage: brew taplocal <PATH>
 #:
@@ -71,5 +71,5 @@ function main() {
 # }}}
 
 [[ $0 =~ .*brew-taplocal ]] \
-  && main \
+  && main "$*"\
   || return 0
